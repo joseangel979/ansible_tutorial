@@ -1,0 +1,34 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: update repository
+    zypper:
+      name: '*'
+      state: latest
+
+  - name: install apache2 package using zypper module
+    zypper:
+      name: httpd
+      state: present
+#      state: absent
+
+  - name: add php support for apache
+    zypper:
+      name: apache2-mod_php74
+      state: present
+
+  - name: Start Apache web server using shell module
+#    ansible.builtin.shell:
+#    args:
+#      executable: /bin/bash
+#      cmd: systemctl start apache2.service
+#      cmd: systemctl 
+#      argv: start apache2.service
+    shell:
+       " systemctl start apache2.service"
+    register: lsout
+    tags: lsout
+
