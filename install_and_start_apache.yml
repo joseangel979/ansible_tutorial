@@ -8,17 +8,23 @@
     zypper:
       name: '*'
       state: latest
+    #when: ansible_os_family == 'Suse'
+    when: ansible_distribution == 'SLES_SAP'
 
   - name: install apache2 package using zypper module
     zypper:
       name: httpd
       state: present
+    #when: ansible_os_family == 'Suse'
+    when: ansible_distribution == 'SLES_SAP'
 #      state: absent
 
   - name: add php support for apache
     zypper:
       name: apache2-mod_php74
       state: present
+    #when: ansible_os_family == 'Suse'
+    when: ansible_distribution == 'SLES_SAP'
 
   - name: Start Apache web server using shell module
 #    ansible.builtin.shell:
@@ -31,4 +37,6 @@
        " systemctl start apache2.service"
     register: lsout
     tags: lsout
+    #when: ansible_os_family == 'Suse'
+    when: ansible_distribution == 'SLES_SAP'
 
