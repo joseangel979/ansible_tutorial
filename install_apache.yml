@@ -4,15 +4,13 @@
   become: true
   tasks:
 
-  - name: install apache2 and php packages using zypper module
-    zypper:
+  - name: install apache and php
+    package:
       name: 
-        - httpd
-        - apache2-mod_php74
-      state: present
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
       update_cache: yes
-    #when: ansible_os_family == 'Suse'
-    when: ansible_distribution == 'SLES_SAP'
 
   - name: Start Apache web server using shell module
     shell:
