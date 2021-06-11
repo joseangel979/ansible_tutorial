@@ -1,0 +1,34 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install updates (SLES_SAP)
+    tags: always
+    zypper:
+      name: '*'
+      state: latest
+    when: ansible_distribution == 'SLES_SAP' 
+
+- hosts: db_server
+  become: true
+  tasks:
+
+  - name: install apache2 and php packages using zypper module
+    tags: apache2, SLES, httpd
+    zypper:
+      name: 
+        - httpd
+        - apache2-mod_php74
+      state: present
+    when: ansible_distribution == 'SLES_SAP'
+
+  - name: Start Apache web server using shell module
+    tags: apache, start, service, SLES
+    shell:
+       " systemctl start apache2.service"
+    register: lsout
+    #when: ansible_os_family == 'Suse'
+    when: ansible_distribution == 'SLES_SAP'
+
