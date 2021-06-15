@@ -32,3 +32,34 @@
     #when: ansible_os_family == 'Suse'
     when: ansible_distribution == 'SLES_SAP'
 
+  - name: Check if directory /srv/www/htdocs/ exist in remote server
+    tags: check, dir
+    stat:
+      path: /srv/www/htdocs/
+    register: dir_exist
+
+  - name: "echo if directory already existed"
+    tags: echo, debug
+    debug:
+      msg: "the /srv/www/htdocs/ directory already existed"
+    when: dir_exist.stat.exists
+
+  - name: Create directory in remote server
+    tags: create, dir
+    file:
+      path: /srv/www/htdocs/
+      state: directory
+      mode: 0755
+      group: root
+      owner: admin
+    when: dir_exist.stat.exists == false
+
+  - name: copy default html file for site
+    tags: apache, start, service, SLES
+    copy:
+      src: default_site.html
+      dest: /srv/www/htdocs/index.html
+      owner: admin
+      group: root
+      mode: 0644
+
