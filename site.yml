@@ -11,6 +11,24 @@
       state: latest
     when: ansible_distribution == 'SLES_SAP' 
 
+- hosts: workstations
+  become: true
+  tasks:
+  
+  - name: install unzip
+    zypper:
+      name: unzip
+      state: latest
+
+  - name: install terraform
+    unarchive: 
+      src: https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
+      dest: /usr/local/bin
+      remote_src: yes
+      mode: 0755
+      owner: root
+      group: root
+
 - hosts: db_server
   become: true
   tasks:
