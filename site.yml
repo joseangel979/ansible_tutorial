@@ -9,7 +9,18 @@
     zypper:
       name: '*'
       state: latest
+    changed_when: false
     when: ansible_distribution == 'SLES_SAP' 
+
+- hosts: all
+  become: true
+  tasks: 
+  
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG67bO+uHpnETOFqyGAsOOTrRSnq4n0yWKTzQD+IuIKF ansible"
 
 - hosts: workstations
   become: true
@@ -42,13 +53,30 @@
       state: present
     when: ansible_distribution == 'SLES_SAP'
 
-  - name: Start Apache web server using shell module
-    tags: apache, start, service, SLES
-    shell:
-       " systemctl start apache2.service"
-    register: lsout
+#  - name: Start Apache web server using shell module
+#    tags: apache, start, service, SLES
+#    shell:
+#       " systemctl start apache2.service"
+#    register: lsout
     #when: ansible_os_family == 'Suse'
+#    when: ansible_distribution == 'SLES_SAP'
+  - name: Start Apache web server on SLES_SAP
+    tags: apache, start, service, SLES
+    service:
+      name: apache2.service
+      state: started
+      enabled: yes
     when: ansible_distribution == 'SLES_SAP'
+
+# This playbook works if th variable reg has change. 
+# Therefore a change in the service is require, example can be
+# changing the ServerAdmin email.
+#  - name: restart apache2 service
+#    tags: apache, restart, service
+#    service:
+#      name: apache2.service
+#      state: restarted
+#    when: reg.changed
 
   - name: Check if directory /srv/www/htdocs/ exist in remote server
     tags: check, dir
