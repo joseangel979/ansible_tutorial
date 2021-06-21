@@ -2,18 +2,30 @@
   tags: apache2, SLES, httpd
   zypper:
     name:
-      - httpd
-      - apache2-mod_php74
-    state: present
-  when: ansible_distribution == 'SLES_SAP'
+     # - httpd
+     # - apache2-mod_php74
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
+    state: latest
+#  when: ansible_distribution == 'SLES_SAP' #This variable is not required because the host variable redirects to the OS type 
 
 - name: Start Apache web server on SLES_SAP
   tags: apache, start, service, SLES
   service:
-    name: apache2.service
+    #name: apache2.service
+    name: "{{ apache_service }}"
     state: started
     enabled: yes
+#  when: ansible_distribution == 'SLES_SAP'
+
+- name: change DirectoryIndex in /etc/apache2/httpd.conf file
+  tags: apache, change, Index
+  lineinfile:
+    path: /etc/apache2/httpd.conf
+    regexp: '^DirectoryIndex'
+    line: DirectoryIndex index.html index.html.var index.html index.html.var2
   when: ansible_distribution == 'SLES_SAP'
+  notify: restart_apache
 
 - name: Check if directory /srv/www/htdocs/ exist in remote server
   tags: check, dir
