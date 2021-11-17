@@ -1,0 +1,5 @@
+apache_package_name: httpd
+apache_service: apache2.service
+php_package_name: apache2-mod_php74
+ssh_users: "admin simone"
+ssh_template_file: sshd_config_sles_neb.j2 

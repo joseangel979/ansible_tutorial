@@ -1,0 +1,22 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: install apache and php
+    package:
+      name: 
+        - "{{ apache_package }}"
+        - "{{ php_package }}"
+      state: latest
+      update_cache: yes
+
+  - name: Start Apache web server using shell module
+    shell:
+       " systemctl start apache2.service"
+    register: lsout
+    tags: lsout
+    #when: ansible_os_family == 'Suse'
+    when: ansible_distribution == 'SLES_SAP'
+
